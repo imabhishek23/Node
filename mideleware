@@ -1,0 +1,26 @@
+const express = require('express');
+const app = express();
+
+const PORT = process.env.PORT || 4000; // Change 4000 to any available port
+
+// Authentication middleware
+const authenticate = (req, res, next) => {
+    const token = req.headers['authorization'];
+    if (token === '12345') {
+        next(); // User is authenticated
+    } else {
+        res.status(401).send('Unauthorized');
+    }
+};
+
+app.get('/public', (req, res) => {
+    res.send('This is a public route.');
+});
+
+app.get('/private', authenticate, (req, res) => {
+    res.send('This is a private route. You are authenticated!');
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
