@@ -1,0 +1,41 @@
+const express = require("express");
+const bodyParser = require("body-parser");
+const session = require("express-session");
+
+const app = express();
+
+app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get("/login", (req, res) => {
+    res.render("login", { error: null });
+});
+
+app.post("/login", (req, res) => {
+    const { loginId, password } = req.body;
+
+    if (loginId === user.loginId && password === user.password) {
+        req.session.user = user; 
+        return res.redirect("/dashboard");
+    } else {
+        return res.render("login", { error: "Invalid Login ID or Password" });
+    }
+});
+
+app.get("/dashboard", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/login");
+    }
+    res.render("dashboard", { user: req.session.user });
+});
+
+app.get("/logout", (req, res) => {
+    req.session.destroy(() => {
+        res.redirect("/login");
+    });
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running at http://localhost:${PORT}`);
+});
